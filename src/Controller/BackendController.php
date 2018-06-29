@@ -20,23 +20,41 @@ abstract class BackendController extends CoreController {
     protected $multiLanguageFields;
     protected $singlePhotos;
     protected $multiPhotos;
+    public $paginate = [
+        'fields' => ['id', 'created'],
+        'limit' => 25,
+        'order' => [
+            'id' => 'asc'
+        ]
+    ];
 
     public function initialize() {
         parent::initialize();
         Utils::useComponents($this, ['Upload']);
         Utils::useTables($this, ['LanguageContent']);
+        $this->loadComponent('Paginator');
     }
 
     public function index() {
-
+        $allObjects = $this->_getAllObjects();
+        $this->paginate($allObjects);
         $this->render('/Element/Backend/list_view');
     }
 
-    public function edit() {
+    public function edit($id) {
+        $this->_createTemplateFieldUpdate();
+        $this->render('/Element/Backend/create_update_view');
+        if ($this->request->is(['post', 'put'])) {
+            $requestData = $this->_prepareDataUpdate($this->request->getData());
+            $this->_createUpdate($requestData, $id);
+        }
+    }
+
+    public function add() {
         $this->_createTemplateFieldUpdate();
         $this->render('/Element/Backend/create_update_view');
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $requestData = $this->_prepareDataUpdate($this->request->getData());
             $this->_createUpdate($requestData);
         }
@@ -48,7 +66,7 @@ abstract class BackendController extends CoreController {
     }
 
     protected function _createUpdate($requestData, $id = false) {
-   
+        
     }
 
     protected function _createTemplateFieldUpdate() {
@@ -57,12 +75,11 @@ abstract class BackendController extends CoreController {
         $inputField = [];
         $multiLangFields = [];
         $inputField = array_merge($inputField, $this->_prepareObject());
-        $inputField = array_merge($inputField, $this->_prepareObject());
         if (!empty($this->multiLanguageFields)) {
             foreach ($mutiLanguage as $languageCode => $languageName) {
                 $multiLangFields[$languageCode] = [];
                 foreach ($this->multiLanguageFields as $fieldName => $fieldInfo) {
-                    $fieldName = $fieldName . '_' . strtolower($languageName);
+                    $fieldName = $fieldName . '_' . strtolower($languageName) . '_' . $languageCode;
                     $multiLangFields[$languageCode] = array_merge($multiLangFields[$languageCode], [$fieldName => $fieldInfo]);
                 }
             }
@@ -80,7 +97,15 @@ abstract class BackendController extends CoreController {
 
     protected abstract function _prepareObject();
 
- 
- 
+    protected function _getAllObjects($conditions = [], $contains = []) {
+        $objejcts = $this->model->find('all', [
+//            'conditions' => $conditions,
+//            'contain' => $contains,
+                    'order' => [
+                        'id' => 'desc'
+                    ],
+                ])->toArray();
+        return $objejcts;
+    }
 
 }

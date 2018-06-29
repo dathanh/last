@@ -27,6 +27,7 @@ class CoreController extends Controller {
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Flash');
+        $this->loadComponent('Paginator');
     }
 
     public function beforeFilter(Event $event) {

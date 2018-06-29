@@ -11,7 +11,11 @@ use App\Controller\CoreController;
 use App\Controller\BackendController;
 
 class ConfigsController extends BackendController {
-
+    public $paginate = [
+        'order' => [
+            'Configs.id' => 'asc'
+        ]
+    ];
     protected $multiLanguageFields = [
         'title' => [
             'label' => 'tieu de',
