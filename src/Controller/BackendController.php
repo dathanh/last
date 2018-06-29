@@ -20,13 +20,6 @@ abstract class BackendController extends CoreController {
     protected $multiLanguageFields;
     protected $singlePhotos;
     protected $multiPhotos;
-    public $paginate = [
-        'fields' => ['id', 'created'],
-        'limit' => 25,
-        'order' => [
-            'id' => 'asc'
-        ]
-    ];
 
     public function initialize() {
         parent::initialize();
@@ -36,8 +29,7 @@ abstract class BackendController extends CoreController {
     }
 
     public function index() {
-        $allObjects = $this->_getAllObjects();
-        $this->paginate($allObjects);
+        $this->_getAllObjects();
         $this->render('/Element/Backend/list_view');
     }
 
@@ -97,15 +89,16 @@ abstract class BackendController extends CoreController {
 
     protected abstract function _prepareObject();
 
-    protected function _getAllObjects($conditions = [], $contains = []) {
-        $objejcts = $this->model->find('all', [
-//            'conditions' => $conditions,
-//            'contain' => $contains,
-                    'order' => [
-                        'id' => 'desc'
-                    ],
-                ])->toArray();
-        return $objejcts;
+    protected function _getAllObjects($conditions = [], $contains = [], $order = false) {
+        $this->paginate = [
+            'fields' => ['id', 'field', 'content'],
+//            'limit' => 1,
+            'offset' => 1,
+            'order' => [
+                'id' => 'asc'
+            ]
+        ];
+        $test = $this->paginate($this->model);
     }
 
 }
