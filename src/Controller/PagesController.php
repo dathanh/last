@@ -74,9 +74,9 @@ class PagesController extends AppController {
     }
 
     public function home() {
-        $contentText = $this->getContent(694);
+        $contentText = $this->getContent(707);
         $this->set('content', $contentText);
-        $this->set('chapter', 694);
+        $this->set('chapter', 707);
     }
 
     public function processGetContent() {
@@ -102,7 +102,8 @@ class PagesController extends AppController {
         $noise6 = '<div style="margin: 50px 5px 0 0;display:inline;float:right"><div id="mediaplayer"></div></div>';
         $noise7 = '<div class="text-center"><div id="abd_itvcplayer">]</div><script type="text/javascript">var abd_media="media.adnetwork.vn";var abd_width=500;var abd_height=281;var abd_skip=7;var abd_flash=true;var abd_popup=true;var abd_wid=1515641312;var abd_zid=1515641399;var abd_content_id="#abd_itvcplayer";var abd_position=0;</script><script src="http://media.adnetwork.vn/assets/js/abd.inpage.preroll.v2.js" type="text/javascript"></script></div>';
         $noise8 = '<a href="http://truyencv.com/thau-huong-cao-thu/">Thâu Hương Cao Thủ</a>';
-
+        $starClass1 = '<a href';
+        $endClasss1 = 'div>';
         $contentText = isset($matches[1][0]) ? $matches[1][0] : '';
         $contentText = str_replace($noise1, '', $contentText);
         $contentText = str_replace($noise2, '', $contentText);
@@ -113,6 +114,8 @@ class PagesController extends AppController {
         $contentText = str_replace($noise7, '', $contentText);
         $contentText = str_replace($noise8, '', $contentText);
 
+        $output1 = preg_match_all("/$starClass1(.*)$endClasss1/is", $contentText, $matches1);
+        $contentText =str_replace($matches1[0][0], '', $contentText);
         return $contentText;
     }
 
