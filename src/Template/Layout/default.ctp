@@ -16,6 +16,7 @@
         <!--< $this->Html->css('/css/plugins/datetimepicker/bootstrap-datetimepicker.css'); ?>-->
         <?= $this->Html->css('/css/plugins/summernote/summernote.css'); ?>
         <?= $this->Html->css('/css/plugins/summernote/summernote-bs3.css'); ?>
+        <?= $this->Html->script('/js/jquery-3.1.1.min.js') ?>
     </head>
 
     <body>

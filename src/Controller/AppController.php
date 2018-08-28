@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -12,6 +13,7 @@
  * @since     0.2.9
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace App\Controller;
 
 use Cake\Controller\Controller;
@@ -25,8 +27,7 @@ use Cake\Event\Event;
  *
  * @link https://book.cakephp.org/3.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller
-{
+class AppController extends Controller {
 
     /**
      * Initialization hook method.
@@ -37,8 +38,12 @@ class AppController extends Controller
      *
      * @return void
      */
-    public function initialize()
-    {
+    const RESPONSE_CODE_NOT_FOUND = 404;
+    const RESPONSE_CODE_UN_AUTHORIZATION = 401;
+    const RESPONSE_CODE_BAD_REQUEST = 500;
+    const RESPONSE_CODE_SUCCESS = 200;
+
+    public function initialize() {
         parent::initialize();
 
         $this->loadComponent('RequestHandler', [
@@ -52,4 +57,42 @@ class AppController extends Controller
          */
         //$this->loadComponent('Security');
     }
+
+    public function actionInvalid($message = 'Bad request!') {
+        $this->sendJson(
+                [
+            'message' => $message,
+            'data' => null
+                ], self::RESPONSE_CODE_BAD_REQUEST
+        );
+    }
+
+    public function actionNotFound($message = 'Data not found!') {
+        $this->sendJson(
+                [
+            'message' => __($message),
+            'data' => null
+                ], self::RESPONSE_CODE_NOT_FOUND
+        );
+    }
+
+    public function actionSuccess($response = [], $message = 'Successful') {
+        $this->sendJson(
+                [
+            'success' => true,
+            'message' => $message,
+            'data' => $response
+                ], self::RESPONSE_CODE_SUCCESS
+        );
+    }
+
+    public function sendJson($json = null, $statusCode = 200) {
+        $this->autoRender = false;
+        $this->response->withType('json');
+        $this->response = $this->response->withStatus($statusCode);
+        $body = $this->response->getBody();
+        $body->write(json_encode($json));
+        $this->response->withBody($body);
+    }
+
 }
